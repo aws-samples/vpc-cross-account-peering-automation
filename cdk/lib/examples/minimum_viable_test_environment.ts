@@ -44,10 +44,12 @@ export class ProviderExampleEnvironmentStack extends Stack {
       });
   
       const routeTableIds = [
-        ...new Set(
-          testVpc.privateSubnets.map((subnet) => {
+        ...
+        new Set(
+          testVpc.isolatedSubnets.map((subnet) => {
             return subnet.routeTable.routeTableId;
           })
+        
         ),
       ];
       const routeTableIdsString = routeTableIds.join(",");
