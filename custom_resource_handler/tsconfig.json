@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "esnext",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "outDir": "dist/src",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["esnext.intl"],
+  },
+  "include": ["src-ts/**/*", "tests/interactive.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}

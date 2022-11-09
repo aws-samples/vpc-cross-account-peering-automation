@@ -1,0 +1,23 @@
+{
+  "name": "cdk",
+  "version": "0.1.0",
+  "bin": {
+    "cdk": "bin/cdk.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.35",
+    "aws-cdk-lib": "^2.49.0",
+    "constructs": "^10.0.0",
+    "typescript": "~3.9.0"
+  },
+  "dependencies": {
+    "cdk-nag": "^2.14.29",
+    "constructs": "^10.0.0"
+  }
+}

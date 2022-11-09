@@ -1,0 +1,9 @@
+**/node_modules/**
+dist
+.env*
+*.map
+.npm
+cdk/bin/environment.ts
+.scannerwork
+sonar-project.properties
+interactive.ts
