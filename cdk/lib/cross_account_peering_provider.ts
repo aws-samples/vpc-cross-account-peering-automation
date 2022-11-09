@@ -30,6 +30,7 @@ export interface CrossAccountPeeringProviderProps {
 export class CrossAccountPeeringProvider extends Construct {
   serviceToken: string;
   providerRole: iam.Role;
+  connectionTable: ddb.Table;
   public static getOrCreate(scope: Stack) {
     const stack = Stack.of(scope);
     const id =
@@ -58,12 +59,13 @@ export class CrossAccountPeeringProvider extends Construct {
 
     const providerFunctionName = "crossAccountPeeringProvider";
 
-    const crossAccountPeeringPartners = new ddb.Table(this, "authorizedCrossAccountPeeringPartners", {
+    this.connectionTable = new ddb.Table(this, "authorizedCrossAccountPeeringPartners", {
       partitionKey: { name: "pk", type: ddb.AttributeType.STRING },
       sortKey: { name: "sk", type: ddb.AttributeType.STRING },
       encryption: ddb.TableEncryption.CUSTOMER_MANAGED,
       encryptionKey: partnerKey,
     });
+
 
     const onEventCode = lambda.Code.fromAsset(
       path.join(__dirname, "../../custom_resource_handler"),
@@ -116,7 +118,7 @@ export class CrossAccountPeeringProvider extends Construct {
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ["dynamodb:GetItem"],
-        resources: [crossAccountPeeringPartners.tableArn],
+        resources: [this.connectionTable.tableArn],
       })
     );
 
@@ -142,7 +144,7 @@ export class CrossAccountPeeringProvider extends Construct {
         resources: ["*"],
         conditions: {
           StringEquals: {
-            [`ec2:ResourceTag/${props.modifierTag}`]: "True",
+            [`aws:ResourceTag/${props.modifierTag}`]: "True",
           },
         },
       })
@@ -180,7 +182,7 @@ export class CrossAccountPeeringProvider extends Construct {
     handlerRole.addManagedPolicy(providerRolePolicy);
     this.providerRole.addManagedPolicy(providerRolePolicy);
 
-    crossAccountPeeringPartners.grantReadData(handlerRole);
+    this.connectionTable.grantReadData(handlerRole);
 
     const onEvent = new lambda.Function(this, "CrossAccountPeeringHandler", {
       code: onEventCode,
@@ -188,7 +190,7 @@ export class CrossAccountPeeringProvider extends Construct {
       runtime: lambda.Runtime.NODEJS_16_X,
       role: handlerRole,
       environment: {
-        TABLE_NAME: crossAccountPeeringPartners.tableName,
+        TABLE_NAME: this.connectionTable.tableName,
         VPC_ID: props.vpcId,
         VPC_CIDR: props.cidr,
         SECURITY_GROUP_ID: props.securityGroupId,

@@ -48,22 +48,39 @@ As there are dependencies for the example we need to first deploy the provider s
 
 To run the example see the `cdk` folder and find the `./bin/environment.template.ts` file. Copy and rename the file to `environment.ts`
 
-Within this file update the `PROVIDER_ACCOUNT` and `CONSUMER_ACCOUNT` (needed to allow cross-account lambda access) variable to match the account ID you wish to use for the provider. Ignore any `CONSUMER_` variables for now.
+Within this file update the `PROVIDER_ACCOUNT` and `CONSUMER_ACCOUNT` (needed to allow cross-account lambda access) variable to match the account ID you wish to use for the provider. Ignore any other variables for now.
+
+Bootstrap cdk in the provider account if not done already
+`cdk bootstrap`
 
 You can now deploy the provider test framework using 
 `cdk deploy providerStack`
 
 ### Setup a peering entry for the consumer
-The deployment of the stack created a DynamoDB table. In order for a consumer to make use of this you need to create an item in this table with the following values (see diagram above for reference)
+The deployment of the stack created a DynamoDB table. In order for a consumer to make use of this you need to either manullay create an allow-list entry or use the cdk automation.
+
+### Manually create an allow list entry
+
+Create an entry in this table with the following values (see diagram above for reference)
 * pk: the numeric account id of the consumer
 * sk: a random (hard to guess) **secret** string that you will communicate to the consumer
 * cidr: the allocated IP range for the consumer VPC to peer with - connection attempts with mismatching CIDR will be rejected
 * port: a TCP/UDP port which will be granted access from the consumer account CIDR
 * protocol: tcp | udp designating the protocol the consumer connection will use
 
-## Deploy the consumer stack
-Once you have deployed the provider stack you can use the outputs from the provider to setup the consumer variables in `environments.ts` based on the decisions and outputs from provider stack.
+### Automate allow list entries using a cdk Stack
+The sample code includes the `ConsumerAllowListStack` which can maintain entries in your allow list table.
 
+Update the `allowList` array to cover all consumer connections you want to allow then deploy the stack
+`cdk deploy consumnerAllowList`
+
+## Deploy the consumer stack
+Once you have deployed the provider stack, and updated the allow-list, you can use the outputs from the provider to setup the consumer variables in `environments.ts` based on the decisions and outputs from provider stack.
+
+Bootstrap cdk in the consumer account if not done already
+`cdk bootstrap`
+
+Then deploy the example peering
 `cdk deploy crossAccountPeering`
 
 You should now see that a VPC peering has been setup and the provider account has updated routing and security to provide full end-to-end connectivity

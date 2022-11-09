@@ -23,6 +23,13 @@ export class ProviderExampleEnvironmentStack extends Stack {
       });
   
       const testVpc = new Vpc(this, "testVpc", {
+        subnetConfiguration: [
+          {
+            cidrMask: 27,
+            name: 'provider',
+            subnetType: SubnetType.PRIVATE_ISOLATED,
+          },
+        ],
         flowLogs: {
           test: {
             destination: FlowLogDestination.toCloudWatchLogs(logGroup, role),
