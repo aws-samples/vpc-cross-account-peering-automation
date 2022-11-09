@@ -72,7 +72,7 @@ Create an entry in this table with the following values (see diagram above for r
 The sample code includes the `ConsumerAllowListStack` which can maintain entries in your allow list table.
 
 Update the `allowList` array to cover all consumer connections you want to allow then deploy the stack
-`cdk deploy consumnerAllowList`
+`cdk deploy consumerAllowList`
 
 ## Deploy the consumer stack
 Once you have deployed the provider stack, and updated the allow-list, you can use the outputs from the provider to setup the consumer variables in `environments.ts` based on the decisions and outputs from provider stack.
