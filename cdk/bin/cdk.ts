@@ -70,7 +70,7 @@ const consumerAllowList = new ConsumerAllowListStack(app, "consumerAllowList", {
       sk: REGISTRATION_CODE,
       cidr: CONSUMER_CIDR,
       protocol: "tcp",
-      port: "445",
+      port: "443",
     },
     // Add more entries here e.g.:
     //  {
